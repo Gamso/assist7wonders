@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
-  IconButton,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
   Tooltip,
+  Typography,
 } from '@mui/material';
 import { AccessTime, Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { Player, PlayerScore, GameParams } from '../types';
-import { getTotal } from '../utils/score';
-import { getNeighborScores, getPlayerScoreByGame } from '../utils/score';
+import { GameParams, Player, PlayerScore } from '../types';
+import { getNeighborScores, getPlayerScoreByGame, getTotal } from '../utils/score';
 import { SxProps, Theme } from '@mui/material/styles';
+import theme from '../config/theme';
 
 type Props = {
   sx?: SxProps<Theme>;
@@ -32,31 +32,33 @@ type Props = {
 } & React.HTMLAttributes<HTMLElement>;
 
 export default function Results(props: Props) {
-  const [winner, setWinner] = useState('');
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const bestPlayer = props.players.reduce(
-      (acc, player, playerIndex) => {
-        const playerSum = getTotal(
-          getPlayerScoreByGame(player.score, props.game.scores),
-          getNeighborScores(props.players, playerIndex)
-        );
-
-        if (acc.name === '' || playerSum > acc.score) {
-          acc = {
-            name: player.name,
-            score: playerSum,
-          };
-        }
-        return acc;
-      },
-      { name: '', score: 0 }
+  props.players.forEach((player, playerIndex) => {
+    player.score['total'] = getTotal(
+      getPlayerScoreByGame(player.score, props.game.scores),
+      getNeighborScores(props.players, playerIndex)
     );
-    const winner = bestPlayer ? bestPlayer.name : '';
-    setWinner(winner);
-  }, [props.players, props.game.scores]);
+  });
+
+  props.players.sort((playerA, playerB) => {
+    return (playerB.score?.['total'] || 0) - (playerA.score?.['total'] || 0);
+  });
+
+  props.players.map((player, playerIndex) => {
+    if( playerIndex === 0 || player.score['total'] === props.players[0].score['total'] ) {
+      player.score['ranking'] = 1
+      return true;
+    }
+
+    player.score['ranking'] = props.players[playerIndex-1]!.score['ranking']!
+    if( player.score['total'] !== props.players[playerIndex-1].score['total'] ) {
+      player.score['ranking'] += 1;
+    }
+
+    return true;
+  })
 
   function renderPlayerScores(player: Player, playerIndex: number) {
     return props.game.scores.map(score => {
@@ -149,46 +151,52 @@ export default function Results(props: Props) {
                 sx={{
                   textAlign: 'center',
                 }}
-                colSpan={props.game.scores.length}
               >
-                {t('scores')}
+                Σ
               </TableCell>
               <TableCell
                 sx={{
                   textAlign: 'center',
                 }}
+                colSpan={props.game.scores.length}
               >
-                Σ
+                {t('scores')}
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.players.map((player, playerIndex) => (
-              <TableRow key={playerIndex}>
-                <TableCell
-                  sx={{
-                    fontSize: '1.5em',
-                    lineHeight: 0,
-                    pr: 0,
-                  }}
-                >
-                  {winner === player.name ? '🏆' : ''}
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2">{player.name}</Typography>
-                  <Typography variant="caption" color="textSecondary">
-                    {player.wonder}
-                  </Typography>
-                </TableCell>
-                {renderPlayerScores(player, playerIndex)}
-                <TableCell sx={{ textAlign: 'center' }}>
-                  {getTotal(
-                    getPlayerScoreByGame(player.score, props.game.scores),
-                    getNeighborScores(props.players, playerIndex)
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+            {props.players
+              .map((player, playerIndex) => (
+                  <TableRow key={playerIndex}>
+                    <TableCell
+                      sx={
+                        player.score['ranking'] === 1 ? {
+                          fontSize: '1.5em',
+                          lineHeight: 0,
+                          pr: 0,
+                        } : {
+                          fontSize: '1em',
+                          lineHeight: 0,
+                          pr: 0,
+                          pl: 3,
+                          color: theme.palette.text.secondary
+                        }
+                      }
+                    >
+                      {player.score['ranking'] === 1 ? '🏆' : player.score['ranking'] + '°'}
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{player.name}</Typography>
+                      <Typography variant="caption" color="textSecondary">
+                        {player.wonder}
+                      </Typography>
+                    </TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      {player.score['total']}
+                    </TableCell>
+                    {renderPlayerScores(player, playerIndex)}
+                  </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
