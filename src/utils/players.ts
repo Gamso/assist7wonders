@@ -46,13 +46,38 @@ export const getPlayersWithUpdatedWonders = (players: Player[], wonders: string[
   ];
 };
 
-export const getPlayersWithShuffledWonders = (players: Player[], wonders: string[]): Player[] => {
-  const shuffledWonders = shuffleWonders(wonders);
+function generatePlayersWithShuffledWonders(players: Player[], wonders: string[]): [boolean, Player[]] {
+  let isError = false;
 
-  return players.map((player, index) => {
+  let remainingWonders = [...wonders];
+
+  players = players.map((player, _index) => {
+    const shuffledWonder = shuffleWonders(remainingWonders.filter(item => item !== player.wonder));
+    if( shuffledWonder.length === 0  ) {
+      console.log("error: no wonders available, retrying...");
+      isError = true;
+      return player;
+    }
+
+    const selectedWonder = shuffledWonder[0];
+    remainingWonders = remainingWonders.filter(item => item !== selectedWonder);
+
     return {
       ...player,
-      wonder: shuffledWonders[index],
+      wonder: selectedWonder
     };
   });
+
+  return [isError, players]
+}
+
+export const getPlayersWithShuffledWonders = (players: Player[], wonders: string[]): Player[] => {
+  let isError: boolean;
+  let resultingPlayers: Player[];
+
+  do {
+    [isError, resultingPlayers] = generatePlayersWithShuffledWonders(players, wonders);
+  } while (isError);
+
+  return resultingPlayers;
 };

@@ -13,3 +13,13 @@ export const getWondersByAddons = (gameAddons: string[]): string[] => {
 
   return [...BASE_GAME.wonders, ...addonWonders];
 };
+
+export const getAddonNameFromWonder = (wonder: string): string | null => {
+  for (const addon of ADDONS) {
+    if( addon.wonders.includes(wonder) ) {
+      return addon.name;
+    }
+  }
+
+  return null;
+};

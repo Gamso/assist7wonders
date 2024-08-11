@@ -1,7 +1,7 @@
 const edifice = {
   name: 'Edifice',
   maxPlayers: 7,
-  wonders: ['Carthago', 'Ur'],
+  wonders: ['Carthage', 'Ur'],
   scores: [
     {
       id: 'edifices',

@@ -2,8 +2,8 @@ import { getScienceTotal } from '../../utils/science';
 
 const cities = {
   name: 'Cities',
-  maxPlayers: 8,
-  wonders: ['Petra', 'Byzantium'],
+  maxPlayers: 7,
+  wonders: ['Byzantium', 'Petra'],
   scores: [
     {
       id: 'debt',
