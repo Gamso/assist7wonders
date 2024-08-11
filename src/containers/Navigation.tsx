@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useContext, useEffect, useRef } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 import { AppBar, Tabs, Tab, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +11,40 @@ export default function Navigation() {
   const theme = useTheme();
   const bigScreen = useMediaQuery(theme.breakpoints.up('sm'));
   const location = useLocation();
+  const history = useHistory();
   const { currentGameParams, currentGamePlayers } = useContext(CurrentGameContext);
   const { t } = useTranslation();
+
+  const tabsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const scrollToSelectedTab = () => {
+      if (tabsRef.current === null) {
+        return;
+      }
+
+      const scrollContainer = tabsRef.current;
+      const selectedTab = scrollContainer.querySelector<HTMLElement>(
+        `button.Mui-selected`
+      );
+
+      if (selectedTab) {
+        setTimeout(() => {
+          selectedTab.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center',
+          });
+        }, 500);
+      }
+    };
+
+    requestAnimationFrame(scrollToSelectedTab);
+  }, [location.pathname]);
+
+  function handleTabChange(_event: React.SyntheticEvent, newValue: string) {
+    history.push(newValue);
+  }
 
   function renderTabs(routes: Route[]): Array<React.ReactNode> {
     return routes.map(route => {
@@ -36,9 +68,7 @@ export default function Navigation() {
               backgroundColor: route.color,
             }}
             label={t(route.id)}
-            component={Link}
             value={route.path}
-            to={route.path}
           />
         );
       }
@@ -56,6 +86,7 @@ export default function Navigation() {
       elevation={4}
     >
       <Tabs
+        ref={tabsRef}
         orientation={bigScreen ? 'vertical' : 'horizontal'}
         sx={{
           height: '100%',
@@ -64,6 +95,7 @@ export default function Navigation() {
           },
         }}
         value={location.pathname}
+        onChange={handleTabChange}
         variant={bigScreen ? 'standard' : 'scrollable'}
         scrollButtons="auto"
       >

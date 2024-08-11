@@ -13,12 +13,14 @@ import { Add } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { getNewGameByLastGame } from '../utils/games';
 import { GamesContext, CurrentGameContext } from './App';
+import { useHistory } from 'react-router-dom';
 
 export default function NewGame() {
   const gamesContext = useContext(GamesContext);
   const { currentGameState } = useContext(CurrentGameContext);
   const [isConfirmOpened, setIsConfirmOpened] = useState(false);
   const { t } = useTranslation();
+  const history = useHistory();
 
   function handleOpenConfirm() {
     setIsConfirmOpened(true);
@@ -38,6 +40,8 @@ export default function NewGame() {
       },
     });
     handleCloseConfirm();
+
+    history.push('/');
   }
 
   return (
