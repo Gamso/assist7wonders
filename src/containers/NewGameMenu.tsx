@@ -15,7 +15,7 @@ import { getNewGameByLastGame } from '../utils/games';
 import { GamesContext, CurrentGameContext } from './App';
 import { useHistory } from 'react-router-dom';
 
-export default function NewGame() {
+export default function NewGameMenu() {
   const gamesContext = useContext(GamesContext);
   const { currentGameState } = useContext(CurrentGameContext);
   const [isConfirmOpened, setIsConfirmOpened] = useState(false);

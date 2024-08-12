@@ -139,7 +139,7 @@ export default function Players() {
   }
 
   function handleResetWondersClick(): void {
-    const players = currentGameState.players.map((player, _index) => {
+    const players = currentGameState.players.map((player) => {
       return {
         ...player,
         wonder: '',
