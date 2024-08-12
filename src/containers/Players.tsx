@@ -193,8 +193,17 @@ export default function Players() {
                   <TableBody>
                     {currentGamePlayers.map((player, index) => (
                       <Draggable key={player.name} draggableId={player.name} index={index}>
-                        {provided => (
-                          <TableRow ref={provided.innerRef} {...provided.draggableProps}>
+                        {(provided, snapshot) => (
+                          <TableRow
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            sx={{
+                              backgroundColor: snapshot.isDragging ? 'lightblue' : 'transparent',
+                              transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+                              boxShadow: snapshot.isDragging ? '0 4px 10px rgba(0, 0, 0, 0.3)' : 'none',
+                              borderRadius: snapshot.isDragging ? '12px' : '0px',
+                            }}
+                          >
                             <TableCell
                               sx={{ py: 1, px: 0, cursor: 'move' }}
                               {...provided.dragHandleProps}
