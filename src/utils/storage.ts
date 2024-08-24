@@ -1,4 +1,4 @@
-import { debounce } from 'debounce';
+import debounce from 'debounce';
 import { GameState } from '../types';
 import { SAVE_TIMEOUT } from '../config/constants';
 

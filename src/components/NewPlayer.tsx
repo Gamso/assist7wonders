@@ -12,7 +12,6 @@ import {
 import { Close, PersonAdd } from '@mui/icons-material';
 import WonderSelect from './WonderSelect';
 import { useTranslation } from 'react-i18next';
-import { shuffleWonders } from '../utils/wonders';
 
 export type Props = {
   names: string[];
@@ -28,32 +27,12 @@ export default function NewPlayer(props: Props) {
   const [isDialogOpened, setIsDialogOpened] = useState(false);
   const { t } = useTranslation();
 
-  const getRandomWonder = useCallback(() => {
-    return (
-      shuffleWonders(props.wonders).filter(wonder => !props.selectedWonders.includes(wonder))[0] ||
-      ''
-    );
-  }, [props.wonders, props.selectedWonders]);
-
-  useEffect(() => {
-    if (isDialogOpened) {
-      setWonder(getRandomWonder());
-    }
-  }, [props.selectedWonders, isDialogOpened, getRandomWonder]);
-
   const toggleDialog = useCallback(
     (show: boolean) => {
       setIsDialogOpened(show);
-
-      if (show) {
-        /* Set random wonder on open */
-        setWonder(getRandomWonder());
-      } else {
-        /* Reset wonder on close */
-        setWonder('');
-      }
+      setWonder('');
     },
-    [getRandomWonder]
+    []
   );
 
   useEffect(() => {
@@ -63,7 +42,7 @@ export default function NewPlayer(props: Props) {
   }, [props.isMax, toggleDialog]);
 
   function isAddButtonEnabled() {
-    return !props.isMax && isNameValid(name) && isWonderValid(wonder);
+    return !props.isMax && isNameValid(name);
   }
 
   function handleSubmit(event: React.FormEvent) {
@@ -80,10 +59,6 @@ export default function NewPlayer(props: Props) {
 
   function isNameExists(name: string): boolean {
     return props.names.map(name => name.toLowerCase()).includes(name.toLowerCase());
-  }
-
-  function isWonderValid(wonder: string): boolean {
-    return Boolean(wonder && !props.selectedWonders.includes(wonder));
   }
 
   return (

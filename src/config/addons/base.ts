@@ -4,7 +4,7 @@ import { getScienceTotal } from '../../utils/science';
 const base = {
   name: '7 Wonders',
   maxPlayers: 7,
-  wonders: ['Rhodes', 'Alexandria', 'Ephesus', 'Babylon', 'Olympia', 'Halicarnassus', 'Giza'],
+  wonders: ['Alexandria','Babylon','Éphesos', 'Gizah', 'Halikarnassos',  'Olympía', 'Rhódos'],
   scores: [
     {
       id: 'military',

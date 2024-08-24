@@ -12,36 +12,27 @@ export default function Total() {
     return getGameParamsByGameState(game);
   }
 
-  function handleHistoryGameDelete(gameId: number) {
-    const games = gamesContext.state.filter(game => game.gameId !== gameId);
-    gamesContext.dispatch({ type: 'SET_GAMES', payload: games });
-  }
-
-  function sortedGames(): GameState[] {
-    return gamesContext.state.sort((prevGame, nextGame) => nextGame.gameId - prevGame.gameId);
-  }
+  const currentGame = gamesContext.state.find(
+    game => game.gameId === currentGameParams.gameId
+  ) as GameState;
 
   return (
     <div>
-      {sortedGames().map(game => (
+      {currentGame && (
         <Results
           sx={{
             '&:not(:first-of-type)': {
               mt: 2,
             },
           }}
-          key={game.gameId}
-          players={game.players}
-          game={getGameParams(game)}
-          modified={game.modified}
+          key={currentGame.gameId}
+          players={currentGame.players}
+          game={getGameParams(currentGame)}
+          modified={currentGame.modified}
           // The current game is not allowed to be deleted
-          onDelete={
-            currentGameParams.gameId !== game.gameId
-              ? () => handleHistoryGameDelete(game.gameId)
-              : undefined
-          }
+          onDelete={undefined}
         />
-      ))}
+      )}
     </div>
   );
 }

@@ -44,3 +44,36 @@ Launches the test runner in the interactive watch mode.
 ### `yarn build`
 
 Builds the app for production to the `build` folder.
+
+## Android PWA
+
+Install capacitor
+### `npm install @capacitor/core @capacitor/cli --legacy-peer-deps`
+### `npm install @capacitor/assets --legacy-peer-deps --save-dev`
+### `npm install @capacitor/android --legacy-peer-deps`
+
+
+Init project
+```
+npx cap init
+npx cap add android
+```
+
+Build web app
+### `npm run build`
+
+
+Generate icons
+```
+npx capacitor-assets generate
+```
+
+Copy web app build into PWA project
+```
+npx cap copy
+```
+
+Launch Android Studio
+```
+npx cap open android
+```

@@ -15,7 +15,7 @@ import {
 import NewPlayer from '../components/NewPlayer';
 import Profile from '../components/Profile';
 import WonderSelect from '../components/WonderSelect';
-import { DeleteForever, Close, Shuffle } from '@mui/icons-material';
+import { DeleteForever, Close, Shuffle, PlaylistRemove } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import { Player } from '../types';
@@ -138,6 +138,19 @@ export default function Players() {
     });
   }
 
+  function handleResetWondersClick(): void {
+    const players = currentGameState.players.map((player) => {
+      return {
+        ...player,
+        wonder: '',
+      };
+    });
+    gamesContext.dispatch({
+      type: 'SET_PLAYERS',
+      payload: { gameId: currentGameState.gameId, players },
+    });
+  }
+
   function handleWonderChange(name: string, wonder: string) {
     gamesContext.dispatch({
       type: 'SET_PLAYER_WONDER',
@@ -180,8 +193,17 @@ export default function Players() {
                   <TableBody>
                     {currentGamePlayers.map((player, index) => (
                       <Draggable key={player.name} draggableId={player.name} index={index}>
-                        {provided => (
-                          <TableRow ref={provided.innerRef} {...provided.draggableProps}>
+                        {(provided, snapshot) => (
+                          <TableRow
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            sx={{
+                              backgroundColor: snapshot.isDragging ? 'lightblue' : 'transparent',
+                              transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+                              boxShadow: snapshot.isDragging ? '0 4px 10px rgba(0, 0, 0, 0.3)' : 'none',
+                              borderRadius: snapshot.isDragging ? '12px' : '0px',
+                            }}
+                          >
                             <TableCell
                               sx={{ py: 1, px: 0, cursor: 'move' }}
                               {...provided.dragHandleProps}
@@ -225,18 +247,34 @@ export default function Players() {
 
       <Box sx={{ mt: 2 }}>
         {currentGamePlayers.length >= 2 && (
-          <Button
-            sx={{
-              marginBottom: 2,
-            }}
-            variant="outlined"
-            color="primary"
-            aria-label="add"
-            startIcon={<Shuffle />}
-            onClick={handleShuffleWondersClick}
-          >
-            {t('shuffleWonders')}
-          </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, marginBottom: 2 }}>
+            <Button
+              sx={{
+                marginBottom: 2,
+              }}
+              variant="outlined"
+              color="primary"
+              aria-label="add"
+              startIcon={<Shuffle />}
+              onClick={handleShuffleWondersClick}
+            >
+              {t('shuffleWonders')}
+            </Button>
+
+            <Button
+              sx={{
+                marginBottom: 2,
+                width: '48px',
+                minWidth: '0',
+              }}
+                variant="outlined"
+                color="primary"
+                aria-label="reset"
+              onClick={handleResetWondersClick}
+            >
+              {<PlaylistRemove />}
+            </Button>
+          </Box>
         )}
         <NewPlayer
           names={currentGamePlayers.map(player => player.name)}

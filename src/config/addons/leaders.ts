@@ -3,7 +3,7 @@ import { getScienceTotal } from '../../utils/science';
 const leaders = {
   name: 'Leaders',
   maxPlayers: 7,
-  wonders: ['Rome'],
+  wonders: ['Abu Simbel', 'Roma'],
   scores: [
     {
       id: 'leaders',

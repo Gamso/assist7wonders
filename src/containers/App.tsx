@@ -4,7 +4,7 @@ import RouteWrapper from '../components/RouteWrapper';
 import MainMenu from './MainMenu';
 import Navigation from './Navigation';
 import Router from './Router';
-import NewGame from './NewGame';
+import NewGameMenu from './NewGameMenu';
 import AddonsMenu from './AddonsMenu';
 import LanguageMenu from './LanguageMenu';
 import VersionControl from './VersionControl';
@@ -17,6 +17,7 @@ import ROUTES from '../config/routes';
 import { getGameParamsByGameState, getNewGameByLastGame, getLastGameState } from '../utils/games';
 import { getGamesFromStorage, saveGamesToStorage } from '../utils/storage';
 import { SnackbarProvider } from 'notistack';
+import HistoryGameMenu from './HistoryGameMenu';
 
 type GamesContextProps = {
   state: GameState[];
@@ -91,7 +92,8 @@ export default function App() {
                   <>
                     <Navigation />
                     <MainMenu>
-                      <NewGame />
+                      <NewGameMenu />
+                      <HistoryGameMenu />
                       <AddonsMenu />
                       <LanguageMenu />
                     </MainMenu>
